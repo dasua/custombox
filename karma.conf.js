@@ -1,26 +1,38 @@
-module.exports = function( config ) {
-    config.set({
-        basePath : './',
+module.exports = function(config) {
+  let configuration = {
 
-        frameworks: ['jasmine'],
+    frameworks: ['jasmine', 'karma-typescript'],
 
-        files : [
-            'https://code.jquery.com/jquery-2.1.3.min.js',
-            'https://cdn.rawgit.com/velesin/jasmine-jquery/master/lib/jasmine-jquery.js',
-            'src/js/*.js',
-            'test/spec/*.js'
-        ],
+    files: [
+      {
+        pattern: 'https://cdnjs.cloudflare.com/ajax/libs/jasmine-ajax/3.3.1/mock-ajax.min.js'
+      },
+      {
+        pattern: 'src/*.scss'
+      },
+      {
+        pattern: 'src/*.ts'
+      }
+    ],
 
-        captureTimeout: 10000,
+    preprocessors: {
+      'src/*.ts': ['karma-typescript'],
+      'src/*.scss': ['scss'],
+    },
 
-        singleRun: true,
+    reporters: ['mocha', 'karma-typescript'],
 
-        logLevel: config.LOG_INFO,
+    coverageReporter: {
+      type: 'lcov',
+      dir: 'coverage/'
+    },
 
-        plugins: [
-            'karma-jasmine',
-            'karma-chrome-launcher',
-            'karma-firefox-launcher'
-        ]
-    });
+    browsers: ['Chrome']
+  };
+
+  if (process.env.TRAVIS){
+    configuration.reporters.push('coverage', 'coveralls');
+  }
+
+  config.set(configuration);
 };
